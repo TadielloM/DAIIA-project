@@ -7,9 +7,9 @@
 
 model bars
 
-species bars{
+species Bar{
 	aspect base{
-       draw square(2);
+       draw square(2) color: #yellow;
       
     }
 }

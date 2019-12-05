@@ -7,8 +7,11 @@
 
 model stages
 
-species stage{
-	
+species Stage{
+	aspect base{
+       draw square(2) color: #orangered;
+      
+    }
 }
 
 /* Insert your model definition here */
