@@ -29,6 +29,7 @@ global {        // characteristics of the world
   map<string,float> drinklist <-create_map(["beer","cocktail","whisky"],[0.2,0.5,0.9]);
   
   int talk_distance<-2; //distance needed to talk with other guests asking informations
+  int journalist_distance<-10;
   
   init{
    	
@@ -57,24 +58,42 @@ global {        // characteristics of the world
    	create Stage number: number_of_stages{
    		
    	}
-    
-    create Party number:number_of_people{
-    	location <-{rnd(dimension),rnd(dimension),2.3};
-    	need_to_drink <- 200+rnd(200);
-    	stage_where_i_am <- Stage(rnd(number_of_stages-1));
-    	bar_where_i_am <- Bar(rnd(number_of_stages-1));
-    	point_to_go <- stage_where_i_am.location;
-    	//Attributi 
+   	
+   	create Journalist{
+  		location <-{rnd(dimension),rnd(dimension),2.7};
+  	}
+   	
+    loop times:number_of_people{
+    	create Party{
+	    	location <-{rnd(dimension),rnd(dimension),2.3};
+	    	need_to_drink <- 200+rnd(200);
+	    	stage_where_i_am <- Stage(rnd(number_of_stages-1));
+	    	bar_where_i_am <- Bar(rnd(number_of_stages-1));
+	    	point_to_go <- stage_where_i_am.location;
+	    	//Attributi 
+	    	int i<-rnd(1,length(music_genres)-1);
+	    	int j<-rnd(100);
+	    	loop x from:j to:i+j{
+	    		add music_genres[x mod length(music_genres)] to:music;
+	    	}
+	    }
     }
-    create Chill number:number_of_people{
-    	location <-{rnd(dimension),rnd(dimension),2.3};
-    	need_to_drink <- 200+rnd(200);
-    	stage_where_i_am <- Stage(rnd(number_of_stages-1));
-    	bar_where_i_am <- Bar(rnd(number_of_stages-1));
-    	point_to_go <-stage_where_i_am.location;
-    	
-    	//Attributi 
+    loop times:number_of_people{
+    	create Chill{
+	    	location <-{rnd(dimension),rnd(dimension),2.3};
+	    	need_to_drink <- 200+rnd(200);
+	    	stage_where_i_am <- Stage(rnd(number_of_stages-1));
+	    	bar_where_i_am <- Bar(rnd(number_of_stages-1));
+	    	point_to_go <- stage_where_i_am.location;
+	    	//Attributi 
+	    	int i<-rnd(1,length(music_genres)-1);
+	    	int j<-rnd(100);
+	    	loop x from:j to:i+j{
+	    		add music_genres[x mod length(music_genres)] to:music;
+	    	}
+	    }
     }
+   	
    	
   }
 } 
@@ -82,8 +101,34 @@ global {        // characteristics of the world
 experiment myexperiment type:gui{  // inputs and output of simulation 
  parameter "number of people: " var: number_of_people;
  
+ //DA AGGIUNGERE A MATTEO
   output{
-    display mydisplay type:opengl {
+  	layout #split;
+    
+    display chart_music { 
+   		chart "Music Preferences" type: pie { 
+      	data "Techno" value:Journalist[0].music_journalist[0] color:#yellow;
+      	data "Pop" value:Journalist[0].music_journalist[1] color:#blue thickness: 5;
+      	data "Rock" value:Journalist[0].music_journalist[2] color:#red thickness: 5;
+      	data "Edm" value:Journalist[0].music_journalist[3] color:#green thickness: 5;
+   		} 
+   	} 
+   	display chart_happiness_general{
+   		chart "General Happiness" type: histogram {
+   			loop i over:Party{
+   				data i.name value:i.happiness;
+   			}
+   			loop i over:Chill{
+   				data i.name value:i.happiness;
+   			}
+  		} 
+	}
+	display chart_happiness_journalist{
+		chart "Happiness by Journalist" type:series{
+			data "Happiness" value:Journalist[0].median_happiness color:#green;
+		}
+	}
+	display mydisplay type:opengl {
       species Guest aspect:base;
       species Party aspect:base;
       species Chill aspect:base;
@@ -91,6 +136,7 @@ experiment myexperiment type:gui{  // inputs and output of simulation
       species Stage aspect:base;
       species Guard aspect:base;
       species Jail  aspect:base;
+      species Journalist aspect:base;
     }
   }
 }

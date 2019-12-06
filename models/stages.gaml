@@ -12,7 +12,8 @@ species Stage skills: [fipa]{
 	
 	string concert_genre;
 	
-	reflex change_concert when: (cycle mod 500 = 0){
+	reflex change_concert when: (cycle mod 500 = 2){
+		//write(name+ music_genres[rnd(length(music_genres)-1)]);
 		concert_genre <- music_genres[rnd(length(music_genres)-1)];
 		list partecipants <- [];
 		loop p over:Party{
@@ -22,7 +23,7 @@ species Stage skills: [fipa]{
 			add c to: partecipants;
 		}
 		
-		write(partecipants);
+		//write(partecipants);
 		
 		do start_conversation(to:: partecipants, performative:: 'inform', contents :: [concert_genre] );
 	}
